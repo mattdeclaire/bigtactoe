@@ -17,3 +17,7 @@ No build step. Open `index.html` in a browser, or serve the folder:
 ```sh
 python3 -m http.server
 ```
+
+## Hosting
+
+The site is served by GitHub Pages from the root of `main` (Settings → Pages → Deploy from a branch → `main` / `/ (root)`). `.nojekyll` tells Pages to serve the files as-is.
