@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Big Tac Toe</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <h1>Big Tac Toe</h1>
+    <p id="status" aria-live="polite"></p>
+    <div id="board" class="big-board" role="grid" aria-label="Big Tac Toe board"></div>
+    <button id="reset" type="button">New game</button>
+    <details class="rules">
+      <summary>How to play</summary>
+      <ul>
+        <li>The big board has a small tic tac toe board in each of its 9 cells.</li>
+        <li>Players take turns placing X or O in a cell of a small board.</li>
+        <li>The cell you play in decides where your opponent plays next: they must play in the small board at the matching position of the big board.</li>
+        <li>Winning a small board claims that cell of the big board for you.</li>
+        <li>Get three big cells in a row to win the game.</li>
+        <li>If you are sent to a small board that is already won or full, you may play in any open board.</li>
+      </ul>
+    </details>
+  </main>
+  <script src="game.js"></script>
+</body>
+</html>
