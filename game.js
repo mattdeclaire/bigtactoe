@@ -7,14 +7,20 @@
     [0, 4, 8], [2, 4, 6],
   ];
 
-  // Returns 'X' or 'O' if one owns a full line in `cells`, else null.
-  function lineWinner(cells) {
-    for (const [a, b, c] of LINES) {
+  // Returns the winning line [a, b, c] if one player owns all three cells, else null.
+  function winningLine(cells) {
+    for (const line of LINES) {
+      const [a, b, c] = line;
       if (cells[a] && cells[a] !== 'draw' && cells[a] === cells[b] && cells[a] === cells[c]) {
-        return cells[a];
+        return line;
       }
     }
     return null;
+  }
+
+  function lineWinner(cells) {
+    const line = winningLine(cells);
+    return line ? cells[line[0]] : null;
   }
 
   let state;
@@ -26,6 +32,8 @@
       player: 'X',
       nextBoard: null, // index of the board the player must play in, or null for any open board
       winner: null, // null | 'X' | 'O' | 'draw'
+      winLine: null, // the three big cells that won the game
+      lastMove: null, // { b, c } of the most recent play
     };
     render();
   }
@@ -43,6 +51,7 @@
     if (!isPlayable(b) || state.cells[b][c]) return;
 
     state.cells[b][c] = state.player;
+    state.lastMove = { b, c };
 
     // Resolve the small board.
     const small = lineWinner(state.cells[b]);
@@ -50,8 +59,11 @@
     else if (state.cells[b].every(Boolean)) state.boardResults[b] = 'draw';
 
     // Resolve the big board.
-    const big = lineWinner(state.boardResults);
-    if (big) state.winner = big;
+    const bigLine = winningLine(state.boardResults);
+    if (bigLine) {
+      state.winner = state.boardResults[bigLine[0]];
+      state.winLine = bigLine;
+    }
     else if (state.boardResults.every((r) => r !== null)) state.winner = 'draw';
 
     // The opponent is sent to the big cell matching the small cell just played.
@@ -78,12 +90,16 @@
       statusEl.innerHTML = `${markSpan(state.player)} to play in ${where}`;
     }
 
+    statusEl.classList.toggle('game-ended', Boolean(state.winner));
     boardEl.innerHTML = '';
     boardEl.classList.toggle('free-choice', !state.winner && state.nextBoard === null);
     for (let b = 0; b < 9; b++) {
       const small = document.createElement('div');
       const playable = isPlayable(b);
       small.className = 'small-board ' + (playable ? 'active' : 'inactive');
+      if (state.winLine && state.winLine.includes(b)) {
+        small.classList.add('win-line', 'win-' + state.winner.toLowerCase());
+      }
 
       for (let c = 0; c < 9; c++) {
         const btn = document.createElement('button');
@@ -95,6 +111,9 @@
           btn.classList.add('mark-' + v.toLowerCase());
         }
         btn.disabled = !playable || Boolean(v);
+        if (state.lastMove && state.lastMove.b === b && state.lastMove.c === c) {
+          btn.classList.add('last-move');
+        }
         btn.setAttribute('aria-label', `Board ${b + 1}, cell ${c + 1}${v ? ', ' + v : ''}`);
         btn.addEventListener('click', () => play(b, c));
         small.appendChild(btn);
@@ -110,7 +129,24 @@
 
       boardEl.appendChild(small);
     }
+
+    if (state.winner) showGameOver();
+    else gameOverEl.hidden = true;
   }
+
+  const gameOverEl = document.getElementById('game-over');
+  const gameOverTitle = document.getElementById('game-over-title');
+
+  function showGameOver() {
+    gameOverEl.hidden = false;
+    gameOverEl.className = 'game-over ' + (state.winner === 'draw' ? 'draw' : 'win-' + state.winner.toLowerCase());
+    gameOverTitle.innerHTML = state.winner === 'draw'
+      ? "It's a draw!"
+      : `${markSpan(state.winner)} wins the game!`;
+  }
+
+  document.getElementById('play-again').addEventListener('click', newGame);
+  document.getElementById('dismiss').addEventListener('click', () => { gameOverEl.hidden = true; });
 
   document.getElementById('reset').addEventListener('click', newGame);
   newGame();

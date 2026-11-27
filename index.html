@@ -10,7 +10,16 @@
   <main>
     <h1>Big Tac Toe</h1>
     <p id="status" aria-live="polite"></p>
-    <div id="board" class="big-board" role="grid" aria-label="Big Tac Toe board"></div>
+    <div class="board-wrap">
+      <div id="board" class="big-board" role="grid" aria-label="Big Tac Toe board"></div>
+      <div id="game-over" class="game-over" role="dialog" aria-live="assertive" hidden>
+        <div class="game-over-card">
+          <p id="game-over-title" class="game-over-title"></p>
+          <button id="play-again" type="button">Play again</button>
+          <button id="dismiss" type="button" class="link-button">See the board</button>
+        </div>
+      </div>
+    </div>
     <button id="reset" type="button">New game</button>
     <details class="rules">
       <summary>How to play</summary>

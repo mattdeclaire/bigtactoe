@@ -92,7 +92,6 @@ h1 { margin: 0 0 8px; }
   animation: none;
 }
 
-.small-board.inactive .cell { opacity: 0.4; }
 .small-board.inactive .cell { cursor: not-allowed; }
 
 @keyframes pulse {
@@ -157,3 +156,82 @@ h1 { margin: 0 0 8px; }
 }
 
 .rules summary { cursor: pointer; color: var(--fg); }
+
+/* Last move */
+.small-board .cell.last-move {
+  box-shadow: inset 0 0 0 3px currentColor;
+  background: color-mix(in srgb, currentColor 18%, var(--cell));
+}
+
+/* Game over */
+.board-wrap { position: relative; }
+
+.small-board.win-line { z-index: 2; animation: win-pulse 1s ease-in-out infinite; }
+.small-board.win-x { --win: var(--x); }
+.small-board.win-o { --win: var(--o); }
+
+@keyframes win-pulse {
+  0%, 100% { box-shadow: 0 0 0 4px var(--win), 0 0 12px 3px var(--win); }
+  50% { box-shadow: 0 0 0 6px var(--win), 0 0 32px 12px var(--win); }
+}
+
+.game-over {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--bg) 35%, transparent);
+  border-radius: 10px;
+  animation: fade-in 0.4s ease-out;
+}
+.game-over[hidden] { display: none; }
+
+.game-over-card {
+  background: var(--cell);
+  border-radius: 14px;
+  padding: 24px 28px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  border: 4px solid var(--muted);
+  animation: pop-in 0.5s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+.game-over.win-x .game-over-card { border-color: var(--x); }
+.game-over.win-o .game-over-card { border-color: var(--o); }
+
+.game-over-title {
+  margin: 0 0 16px;
+  font-size: clamp(1.6rem, 8vw, 2.6rem);
+  font-weight: 800;
+}
+
+#play-again, #reset {
+  font: inherit;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+#play-again { border: none; background: var(--fg); color: var(--bg); }
+
+.link-button {
+  display: block;
+  margin: 10px auto 0;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+@keyframes fade-in { from { opacity: 0; } }
+@keyframes pop-in { from { transform: scale(0.6); opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .small-board.win-line, .game-over, .game-over-card { animation: none; }
+  .small-board.win-line { box-shadow: 0 0 0 6px var(--win); }
+}
+
+#status.game-ended { font-size: clamp(1.6rem, 7vw, 2.2rem); font-weight: 800; }
