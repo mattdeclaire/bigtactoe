@@ -79,6 +79,7 @@
     }
 
     boardEl.innerHTML = '';
+    boardEl.classList.toggle('free-choice', !state.winner && state.nextBoard === null);
     for (let b = 0; b < 9; b++) {
       const small = document.createElement('div');
       const playable = isPlayable(b);

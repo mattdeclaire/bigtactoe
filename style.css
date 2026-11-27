@@ -6,7 +6,8 @@
   --big-line: #1f2328;
   --x: #d9480f;
   --o: #1971c2;
-  --active: #fff3bf;
+  --active: #ffe066;
+  --active-ring: #f59f00;
   --cell: #ffffff;
 }
 
@@ -19,7 +20,8 @@
     --big-line: #e6e6e6;
     --x: #ff8a4c;
     --o: #6cb4ff;
-    --active: #3d3a1f;
+    --active: #5c4a00;
+    --active-ring: #ffd43b;
     --cell: #22252b;
   }
 }
@@ -77,8 +79,30 @@ h1 { margin: 0 0 8px; }
   transition: background 0.15s;
 }
 
-.small-board.active { background: var(--active); }
+.small-board.active {
+  background: var(--active);
+  box-shadow: 0 0 0 4px var(--active-ring), 0 0 18px 4px var(--active-ring);
+  z-index: 1;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+/* When every open board is playable, skip the pulse and glow so the board doesn't flash everywhere. */
+.big-board.free-choice .small-board.active {
+  box-shadow: 0 0 0 3px var(--active-ring);
+  animation: none;
+}
+
+.small-board.inactive .cell { opacity: 0.4; }
 .small-board.inactive .cell { cursor: not-allowed; }
+
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 4px var(--active-ring), 0 0 10px 2px var(--active-ring); }
+  50% { box-shadow: 0 0 0 4px var(--active-ring), 0 0 24px 8px var(--active-ring); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .small-board.active { animation: none; }
+}
 
 .cell {
   border: 1px solid var(--line);
