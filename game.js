@@ -24,8 +24,10 @@
   }
 
   let state;
+  let history = []; // snapshots of state before each move, for undo
 
   function newGame() {
+    history = [];
     state = {
       cells: Array.from({ length: 9 }, () => Array(9).fill(null)), // cells[board][cell]
       boardResults: Array(9).fill(null), // null | 'X' | 'O' | 'draw'
@@ -50,6 +52,7 @@
   function play(b, c) {
     if (!isPlayable(b) || state.cells[b][c]) return;
 
+    history.push(structuredClone(state));
     state.cells[b][c] = state.player;
     state.lastMove = { b, c };
 
@@ -75,6 +78,7 @@
 
   const boardEl = document.getElementById('board');
   const statusEl = document.getElementById('status');
+  const undoEl = document.getElementById('undo');
 
   function markSpan(p) {
     return `<span class="mark-${p.toLowerCase()}">${p}</span>`;
@@ -90,6 +94,7 @@
       statusEl.innerHTML = `${markSpan(state.player)} to play in ${where}`;
     }
 
+    undoEl.disabled = history.length === 0;
     statusEl.classList.toggle('game-ended', Boolean(state.winner));
     boardEl.innerHTML = '';
     boardEl.classList.toggle('free-choice', !state.winner && state.nextBoard === null);
@@ -148,6 +153,20 @@
   document.getElementById('play-again').addEventListener('click', newGame);
   document.getElementById('dismiss').addEventListener('click', () => { gameOverEl.hidden = true; });
 
+  function undo() {
+    if (!history.length) return;
+    state = history.pop();
+    render();
+  }
+
   document.getElementById('reset').addEventListener('click', newGame);
+  undoEl.addEventListener('click', undo);
+  document.getElementById('game-over-undo').addEventListener('click', undo);
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && !e.shiftKey && e.key.toLowerCase() === 'z') {
+      e.preventDefault();
+      undo();
+    }
+  });
   newGame();
 })();

@@ -235,3 +235,18 @@ h1 { margin: 0 0 8px; }
 }
 
 #status.game-ended { font-size: clamp(1.6rem, 7vw, 2.2rem); font-weight: 800; }
+
+/* Controls */
+.controls { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 16px; }
+.controls #reset { margin-top: 0; }
+#undo {
+  font: inherit;
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--cell);
+  color: var(--fg);
+  cursor: pointer;
+}
+#undo:disabled { opacity: 0.45; cursor: default; }
